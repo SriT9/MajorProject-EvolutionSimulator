@@ -1,0 +1,53 @@
+from math import sqrt
+import numpy as np
+
+
+def line_to_rectangle(p1, p2, thickness):
+    x1, y1 = p1
+    x2, y2 = p2
+    thickness = 0.5 * thickness
+    if p1 == p2:
+        return [
+            (x1 - thickness, y1 - thickness),
+            (x1 - thickness, y1 + thickness),
+            (x1 + thickness, y1 + thickness),
+            (x1 + thickness, y1 - thickness),
+        ]
+
+    dx = x2 - x1
+    dy = y2 - y1
+
+    length = sqrt(dx ** 2 + dy ** 2)
+
+    dx = dx/length if length != 0 else 0
+    dy = dy/length if length != 0 else 0
+
+    px = thickness * -dy
+    py = thickness * dx
+
+    ux = thickness * dx
+    uy = thickness * dy
+
+    return [
+        (x1 + px - ux, y1 + py - uy),
+        (x2 + px + ux, y2 + py + uy),
+        (x2 - px + ux, y2 - py + uy),
+        (x1 - px - ux, y1 - py - uy),
+    ]
+
+
+def get_position_of_creature(bodies):
+    ''' Give the maxmium displacement of the given creature'''
+    temp_data_x = []
+    for body in bodies:
+        if body.worldCenter.x != 0:
+            temp_data_x.append(body.worldCenter.x)
+    if temp_data_x:
+        return np.amax(temp_data_x)
+    return 0
+
+
+def get_fitness(bodies, starting_position):
+    ''' returns fitness of the creature'''
+    fitness = get_position_of_creature(bodies) - starting_position
+    return fitness
